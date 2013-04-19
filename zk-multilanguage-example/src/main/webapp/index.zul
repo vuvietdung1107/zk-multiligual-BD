@@ -1,0 +1,107 @@
+<?page title="Auto Generated index.zul"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" ?>
+<window title="MultiLanguage POC" border="normal" >
+
+	
+	<zscript>	
+	<![CDATA[
+	        String varLang = session.getAttribute("var_lang");
+	        String currency_symbol = session.getAttribute("currency_symbol");
+	        
+	        
+	        private void cmbLanguage$onChange(String strLang){	        	  
+	        	 String[] lang_countries =  strLang.split(",");	        	 
+	        	
+	        	 Locale locale = new Locale(lang_countries[0],lang_countries[1]);
+	        	 
+	        	 //CIRRENCY
+	        	 session.setAttribute("currency_symbol", Currency.getInstance(locale).getSymbol(locale));	        	 
+                 session.setAttribute("var_lang", strLang);
+                 
+                 //LOCALE
+                 session.setAttribute(org.zkoss.web.Attributes.PREFERRED_LOCALE, locale);
+                 
+                 //TIMEZONE
+                 TimeZone timezone =  TimeZone.getDefault();
+                 session.setAttribute(org.zkoss.web.Attributes.PREFERRED_TIME_ZONE, timezone); 
+                 java.util.Calendar cal = java.util.Calendar.getInstance(timezone);
+                 
+                 //DATEFORMAT
+		         session.setAttribute(org.zkoss.web.Attributes.PREFERRED_DATE_FORMAT_INFO,new edu.makoto.multilingual.CustomFormatInfo());                 
+                 execution.sendRedirect("");
+	         }
+	         if(session.getAttribute("var_lang")==null){
+					// Language for default
+					cmbLanguage$onChange("es,ES"); 
+				}
+	]]>
+	</zscript>
+	
+	<div apply="${com.axfin.locator.controller.LanguageConDtrolller}">
+		<label value="${labels.language}: " />
+		
+
+		<listbox id="cmbLanguage"
+				onSelect="cmbLanguage$onChange(self.getSelectedItem().getValue())"
+				mold="select">
+			<listitem label="English" value="en,US" selected="${varLang=='en,US'}" />
+			<listitem label="United Kindong" value="en,GB" selected="${varLang=='en,GB'}" />
+			<listitem label="Spain" value="es,ES" selected="${varLang=='es,ES'}" />
+			<listitem label="Perú" value="es,PE" selected="${varLang=='es,PE'}" />			
+		</listbox>
+
+		<grid id="demoGrid" width="300px">
+			<rows>
+				<row>
+					${labels.user}
+					<textbox type="text" hflex="1" />
+				</row>
+				<row>
+
+					${labels.name}
+					<textbox type="text" hflex="1" />
+				</row>
+				<row>
+					${labels.lastname}
+					<textbox type="text" hflex="1" />
+				</row>
+
+				<row>
+					${labels.age}
+					<textbox type="text" hflex="1" />
+				</row>
+				
+				<row>
+					${labels.date}
+					 <datebox format="short" onCreate="self.value = new Date()" mold="rounded" />
+				</row>
+				
+				<row>
+					locale en					
+					<decimalbox format="#,##0.00" locale="en" value="2000.00" />					
+				</row>		
+			
+				<row>
+					Locale It
+					<decimalbox format="#,##0.00" locale="it" value="2000.00" />
+				</row>	
+						
+				<row>
+					${labels.time}
+					 <timebox format="short" onCreate="self.value = new Date()" mold="rounded" />
+										
+				</row>
+				 
+            	<row>
+					${labels.currency} ${currency_symbol}
+					<textbox type="text"  />
+				</row>
+            
+				<row>
+					<button label="Reload Labels"
+						onClick="org.zkoss.util.resource.Labels.reset();execution.sendRedirect(null);" />
+				</row>
+			</rows>
+		</grid>
+	</div>
+</window>
